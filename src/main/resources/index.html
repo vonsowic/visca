@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Visca</title>
+    <script src="index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div>
+        <div>
+            Camera:  <input type="text" id="camera"><br>
+            Pan speed:  <input type="text" id="pan"><br>
+            Tilt speed: <input type="text" id="tilt"><br>
+        </div>
+        <div>
+            <button onclick="PanTiltDown()">PanTiltDown</button>
+            <button onclick="PanTiltHome()">PanTiltHome</button>
+            <button onclick="PanTiltLeft()">PanTiltLeft</button>
+            <button onclick="PanTiltRigth()">PanTiltRigth</button>
+            <button onclick="PanTiltUp()">PanTiltUp</button>
+        </div>
+
+        <div>
+            <button onclick="Address()">Address</button>
+            <button onclick="ClearAll()">ClearAll</button>
+            <button onclick="GetPanTiltMaxSpeed()">GetPanTiltMaxSpeed</button>
+            <button onclick="PanTiltAbsolutePos()">PanTiltAbsolutePos</button>
+        </div>
+
+        <div>
+            <button onclick="ZoomTeleStd()">ZoomTeleStd</button>
+            <button onclick="ZoomWideStd()">ZoomWideStd</button>
+        </div>
+        <div>
+            Port: <input type="text" id="port">
+            <button onclick="setPort()">Wybierz</button>
+        </div>
+    </div>
+
+
+    <div>
+        <div id="output"></div>
+    </div>
+</body>
+</html>
