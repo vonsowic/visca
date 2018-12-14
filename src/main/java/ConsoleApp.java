@@ -55,7 +55,7 @@ public class ConsoleApp {
                 Common.panTiltHome(camera);
                 break;
             case "address":
-                Common.address(camera);
+                Common.address(camera, panSpeed);
                 break;
             case "pos":
                 Common.panTiltAbsolutePos(camera);

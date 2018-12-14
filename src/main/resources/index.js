@@ -98,7 +98,7 @@ function post(url) {
     }
 
     return axios.post(url, {
-        broadcast: document.getElementById('camera').value,
+        camera: document.getElementById('camera').value,
         panSpeed: panSpeed,
         tiltSpeed: tiltSpeed
     })

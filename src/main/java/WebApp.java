@@ -20,7 +20,7 @@ public class WebApp {
         post("/Address", (req, res) -> {
             Gson gson = new Gson();
             ViscaRequest request = gson.fromJson(req.body(), ViscaRequest.class);
-            Common.address(Byte.valueOf(request.camera));
+            Common.address(Byte.valueOf(request.camera), request.panSpeed);
             String resposne =Common.readResponse();
             System.out.println(resposne);
             return resposne;
@@ -68,7 +68,11 @@ public class WebApp {
         post("/PanTiltLeft", (req, res) -> {
             Gson gson = new Gson();
             ViscaRequest request = gson.fromJson(req.body(), ViscaRequest.class);
-            Common.panTiltLeft(request.panSpeed, request.tiltSpeed, Byte.valueOf(request.camera));
+            try {
+                Common.panTiltLeft(request.panSpeed, request.tiltSpeed, Byte.valueOf(request.camera));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             System.out.println(Common.readResponse());
             String resposne =Common.readResponse();
             System.out.println(resposne);

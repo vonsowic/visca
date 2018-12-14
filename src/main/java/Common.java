@@ -1,6 +1,5 @@
 import jssc.SerialPortException;
 
-import java.io.IOException;
 import jssc.SerialPort;
 import pl.edu.agh.kis.visca.ViscaResponseReader;
 import pl.edu.agh.kis.visca.cmd.Cmd;
@@ -9,47 +8,47 @@ import pl.edu.agh.kis.visca.cmd.*;
 
 public class Common {
 
-    public static void panTiltLeft(String panSpeed, String tiltSpeed, byte camera) throws IllegalAccessException, IOException, InstantiationException, SerialPortException {
+    public static void panTiltLeft(String panSpeed, String tiltSpeed, byte camera) throws IllegalAccessException, InstantiationException, SerialPortException {
         sendCommand(PanTiltLeftCmd.class, panSpeed, tiltSpeed, camera);
     }
 
-    public static void panTiltRight(String panSpeed, String tiltSpeed, byte camera) throws IllegalAccessException, IOException, InstantiationException, SerialPortException {
+    public static void panTiltRight(String panSpeed, String tiltSpeed, byte camera) throws IllegalAccessException, InstantiationException, SerialPortException {
         sendCommand(PanTiltRightCmd.class, panSpeed, tiltSpeed, camera);
     }
 
-    public static void panTiltDown(String panSpeed, String tiltSpeed, byte camera) throws IllegalAccessException, IOException, InstantiationException, SerialPortException {
+    public static void panTiltDown(String panSpeed, String tiltSpeed, byte camera) throws IllegalAccessException, InstantiationException, SerialPortException {
         sendCommand(PanTiltDownCmd.class, panSpeed, tiltSpeed, camera);
     }
 
-    public static void sendPanTiltUp(String panSpeed, String tiltSpeed, byte camera) throws IllegalAccessException, IOException, InstantiationException, SerialPortException {
+    public static void sendPanTiltUp(String panSpeed, String tiltSpeed, byte camera) throws IllegalAccessException, InstantiationException, SerialPortException {
         sendCommand(PanTiltUpCmd.class, panSpeed, tiltSpeed, camera);
     }
 
-    public static void panTiltHome(byte camera) throws IllegalAccessException, IOException, InstantiationException, SerialPortException {
+    public static void panTiltHome(byte camera) throws IllegalAccessException, InstantiationException, SerialPortException {
         sendCommand(PanTiltHomeCmd.class, camera);
     }
 
-    public static void clearAll(byte camera) throws IllegalAccessException, IOException, InstantiationException, SerialPortException {
+    public static void clearAll(byte camera) throws IllegalAccessException, InstantiationException, SerialPortException {
         sendCommand(ClearAllCmd.class, camera);
     }
 
-    public static void panTiltAbsolutePos(byte camera) throws IllegalAccessException, IOException, InstantiationException, SerialPortException {
+    public static void panTiltAbsolutePos(byte camera) throws IllegalAccessException, InstantiationException, SerialPortException {
         sendCommand(PanTiltAbsolutePosCmd.class, camera);
     }
 
-    public static void address(byte camera) throws IllegalAccessException, IOException, InstantiationException, SerialPortException {
-        sendCommand(AddressCmd.class, camera);
+    public static void address(byte camera, String newCameraAddress) throws IllegalAccessException, InstantiationException, SerialPortException {
+        sendCommandAddress(camera, Byte.valueOf(newCameraAddress));
     }
 
-    public static void getPanTiltMaxSpeed(byte camera) throws IllegalAccessException, IOException, InstantiationException, SerialPortException {
+    public static void getPanTiltMaxSpeed(byte camera) throws IllegalAccessException, InstantiationException, SerialPortException {
         sendCommand(GetPanTiltMaxSpeedCmd.class, camera);
     }
 
-    public static void sendZoomTeleStd(byte camera) throws IllegalAccessException, IOException, InstantiationException, SerialPortException {
+    public static void sendZoomTeleStd(byte camera) throws IllegalAccessException, InstantiationException, SerialPortException {
         sendCommand(ZoomTeleStdCmd.class, camera);
     }
 
-    public static void sendZoomWideStd(byte camera) throws IllegalAccessException, IOException, InstantiationException, SerialPortException {
+    public static void sendZoomWideStd(byte camera) throws IllegalAccessException, InstantiationException, SerialPortException {
         sendCommand(ZoomWideStdCmd.class, camera);
     }
 
@@ -67,9 +66,9 @@ public class Common {
         } else if (formatedRes.startsWith("4")) {
             return "ACK";
         } else if (formatedRes.startsWith("50")) {
-            return "Information return. Address: " + formatedRes.charAt(1);
+            return "Information return";
         } else if (formatedRes.startsWith("5")) {
-            return "Command completion. Address: " + formatedRes.charAt(1);
+            return "Command completion";
         } else if (formatedRes.startsWith("60 ")){
             return "error";
         }
@@ -133,18 +132,38 @@ public class Common {
             cmdData[4] = Byte.parseByte(tiltSpeed);
         }
 
-//         TODO: Patka, sprawdz
-        if (camera == 8) {
-            cmdData[0] = (byte) (cmdData[0] & 0x000111111);
-        }
 
         ViscaCommand vCmd = new ViscaCommand();
         vCmd.commandData = cmdData;
         vCmd.sourceAdr = 0;
-        vCmd.destinationAdr = camera;
 
+        if (camera == 8) {
+            vCmd.destinationAdr = (byte) 0x88;
+        } else {
+            vCmd.destinationAdr = camera;
+        }
 
 	    cmdData = vCmd.getCommandData();
         getSerialPort().writeBytes(cmdData);
     }
+
+    public static void sendCommandAddress(byte camera, byte newCamera) throws IllegalAccessException, InstantiationException, SerialPortException {
+        byte[] cmdData = new AddressCmd().createCommandData();
+
+        ViscaCommand vCmd = new ViscaCommand();
+        cmdData[1] = newCamera;
+        vCmd.commandData = cmdData;
+        vCmd.sourceAdr = 0;
+
+        if (camera == 8) {
+            vCmd.destinationAdr = (byte) 0x88;
+        } else {
+            vCmd.destinationAdr = camera;
+        }
+
+
+        cmdData = vCmd.getCommandData();
+        getSerialPort().writeBytes(cmdData);
+    }
+
 }
